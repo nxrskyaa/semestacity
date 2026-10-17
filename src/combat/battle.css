@@ -1,0 +1,234 @@
+/* Holo battle HUD — everything scoped under #battle-hud */
+#battle-hud {
+  --cy: #5ee7ff;
+  --cy-dim: rgba(94, 231, 255, 0.35);
+  --ink: rgba(4, 14, 26, 0.72);
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden;
+  font-family: 'Orbitron', 'M PLUS Rounded 1c', system-ui, sans-serif;
+  color: #e6fbff; user-select: none; -webkit-user-select: none;
+  transition: opacity .4s ease;
+}
+#battle-hud.bh-hidden { opacity: 0; }
+#battle-hud * { box-sizing: border-box; }
+
+/* ---------------------------------------------------------------- top bars */
+#battle-hud .bh-top {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  width: min(1120px, 95vw);
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: start;
+  opacity: 0; animation: bh-drop .7s .2s cubic-bezier(.2,.9,.3,1.2) forwards;
+}
+@keyframes bh-drop { from { opacity: 0; transform: translate(-50%, -30px); } to { opacity: 1; transform: translate(-50%, 0); } }
+#battle-hud .bh-head { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 14px 4px 6px; }
+#battle-hud .bh-p2 .bh-head { flex-direction: row-reverse; padding: 0 6px 4px 14px; }
+#battle-hud .bh-robot {
+  font-weight: 800; font-style: italic; font-size: 15px; letter-spacing: .14em;
+  text-shadow: 0 0 10px rgba(94, 231, 255, .6), 0 2px 0 rgba(0, 0, 0, .6);
+}
+#battle-hud .bh-p2 .bh-robot { text-shadow: 0 0 10px rgba(255, 138, 61, .6), 0 2px 0 rgba(0, 0, 0, .6); }
+#battle-hud .bh-hpnum {
+  font-weight: 900; font-style: italic; font-size: 24px; line-height: 1; letter-spacing: .04em;
+  font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(94, 231, 255, .7), 0 2px 0 #021018;
+}
+#battle-hud .bh-bar {
+  height: 20px; padding: 3px; transform: skewX(-24deg);
+  background: linear-gradient(180deg, rgba(8, 30, 48, .85), rgba(2, 10, 20, .85));
+  border: 1px solid rgba(94, 231, 255, .6);
+  box-shadow: 0 0 14px rgba(94, 231, 255, .35), inset 0 0 8px rgba(94, 231, 255, .15);
+}
+#battle-hud .bh-p2 .bh-bar { transform: skewX(24deg); border-color: rgba(255, 150, 90, .65); box-shadow: 0 0 14px rgba(255, 138, 61, .3), inset 0 0 8px rgba(255, 138, 61, .15); }
+#battle-hud .bh-bar-in { position: relative; width: 100%; height: 100%; overflow: hidden; background: rgba(0, 0, 0, .45); }
+#battle-hud .bh-fill, #battle-hud .bh-trail { position: absolute; inset: 0; transform-origin: 0 50%; will-change: transform; }
+#battle-hud .bh-p2 .bh-fill, #battle-hud .bh-p2 .bh-trail { transform-origin: 100% 50%; }
+#battle-hud .bh-trail { background: linear-gradient(180deg, #ffffff 0%, #ffb3b3 45%, #ff3b4f 100%); }
+#battle-hud .bh-fill {
+  --hue: 190;
+  background: linear-gradient(180deg, hsl(var(--hue) 100% 82%) 0%, hsl(var(--hue) 100% 60%) 45%, hsl(var(--hue) 95% 42%) 100%);
+  box-shadow: 0 0 10px hsl(var(--hue) 100% 60%);
+}
+#battle-hud .bh-sheen {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), rgba(0, 10, 20, .55) calc(10% - 2px) 10%),
+    linear-gradient(180deg, rgba(255, 255, 255, .28), transparent 50%);
+}
+#battle-hud .low .bh-fill { animation: bh-low .5s steps(2) infinite; }
+@keyframes bh-low { 50% { filter: brightness(1.6); } }
+#battle-hud .bh-pilot {
+  margin-top: 5px; padding: 0 8px; font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
+  font-size: 12px; letter-spacing: .06em; color: rgba(230, 251, 255, .85);
+}
+#battle-hud .bh-pilot span { font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: .25em; color: var(--cy); margin-right: 6px; }
+#battle-hud .bh-p2 .bh-pilot { text-align: right; }
+#battle-hud .bh-p2 .bh-pilot span { color: #ff9a55; }
+
+#battle-hud .bh-vs {
+  position: relative; width: 66px; height: 54px; margin-top: 2px;
+  display: grid; place-items: center;
+}
+#battle-hud .bh-vs::before {
+  content: ''; position: absolute; inset: 4px 8px;
+  background: linear-gradient(135deg, rgba(94, 231, 255, .22), rgba(255, 138, 61, .22));
+  border: 1px solid rgba(255, 255, 255, .45); transform: skewX(-14deg);
+  box-shadow: 0 0 18px rgba(94, 231, 255, .35);
+}
+#battle-hud .bh-vs span {
+  position: relative; font-weight: 900; font-style: italic; font-size: 26px; letter-spacing: .02em;
+  background: linear-gradient(180deg, #ffffff 30%, #9befff 60%, #ffb27a 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 6px rgba(94, 231, 255, .8)) drop-shadow(0 2px 0 rgba(0, 0, 0, .6));
+}
+
+/* ---------------------------------------------------------------- cooldown rings */
+#battle-hud .bh-rings { display: flex; gap: 12px; margin-top: 9px; padding-left: 6px; }
+#battle-hud .bh-ring { position: relative; width: 46px; text-align: center; }
+#battle-hud .bh-ring svg { width: 46px; height: 46px; transform: rotate(-90deg); display: block; }
+#battle-hud .bh-ring-bg { fill: rgba(4, 16, 28, .72); stroke: rgba(94, 231, 255, .16); stroke-width: 3.2; }
+#battle-hud .bh-ring-fg { fill: none; stroke: #2b8fb3; stroke-width: 3.2; stroke-linecap: round; transition: stroke .15s; }
+#battle-hud .bh-ring.ready .bh-ring-fg { stroke: var(--cy); filter: drop-shadow(0 0 3px var(--cy)); }
+#battle-hud .bh-ring-key {
+  position: absolute; top: 0; left: 0; width: 46px; height: 46px; display: grid; place-items: center;
+  font-size: 9px; font-weight: 800; letter-spacing: .08em; color: rgba(230, 251, 255, .55);
+}
+#battle-hud .bh-ring.ready .bh-ring-key { color: #fff; text-shadow: 0 0 6px var(--cy); }
+#battle-hud .bh-ring-label { margin-top: 3px; font-size: 9px; font-weight: 800; letter-spacing: .2em; color: rgba(94, 231, 255, .6); }
+#battle-hud .bh-ring.ready .bh-ring-label { color: var(--cy); }
+#battle-hud .bh-ring.pulse svg { animation: bh-pulse .35s ease-out; }
+@keyframes bh-pulse { 0% { transform: rotate(-90deg) scale(1.25); } 100% { transform: rotate(-90deg) scale(1); } }
+
+/* ---------------------------------------------------------------- reticle */
+#battle-hud .bh-reticle { position: absolute; left: 0; top: 0; width: 70px; height: 70px; display: none; color: var(--cy); will-change: transform; }
+#battle-hud .bh-reticle i { position: absolute; width: 14px; height: 14px; border: 2px solid currentColor; filter: drop-shadow(0 0 4px currentColor); }
+#battle-hud .bh-reticle i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+#battle-hud .bh-reticle i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+#battle-hud .bh-reticle i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+#battle-hud .bh-reticle i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+#battle-hud .bh-reticle b {
+  position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border: 1.5px solid currentColor; transform: rotate(45deg); animation: bh-spin 2.4s linear infinite; opacity: .8;
+}
+@keyframes bh-spin { to { transform: rotate(405deg); } }
+#battle-hud .bh-reticle.hot { color: #ff5a6e; }
+
+/* ---------------------------------------------------------------- damage numbers */
+#battle-hud .bh-dmg-layer { position: absolute; inset: 0; }
+#battle-hud .bh-dmg {
+  position: absolute; left: 0; top: 0; display: none; will-change: transform, opacity;
+  font-weight: 900; font-style: italic; font-size: 22px; color: #ffffff; letter-spacing: .02em;
+  text-shadow: 0 0 8px rgba(94, 231, 255, .9), 0 2px 0 #06222f, 0 -1px 0 #06222f;
+}
+#battle-hud .bh-dmg.big { font-size: 30px; color: #ffe27a; text-shadow: 0 0 10px rgba(255, 190, 60, .9), 0 3px 0 #2a1600; }
+#battle-hud .bh-dmg.hurt { color: #ff8a8a; text-shadow: 0 0 8px rgba(255, 50, 70, .9), 0 2px 0 #2a0008; }
+
+/* ---------------------------------------------------------------- banner */
+#battle-hud .bh-banner { position: absolute; left: 0; right: 0; top: 34%; height: 0; display: flex; justify-content: center; align-items: center; opacity: 0; }
+#battle-hud .bh-banner.show { opacity: 1; }
+#battle-hud .bh-banner::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -58px; height: 116px;
+  background: linear-gradient(90deg, transparent, rgba(4, 20, 36, .78) 20%, rgba(4, 20, 36, .78) 80%, transparent);
+  border-top: 1px solid rgba(94, 231, 255, .5); border-bottom: 1px solid rgba(94, 231, 255, .5);
+  transform: scaleY(0);
+}
+#battle-hud .bh-banner.show::before { animation: bh-band .35s ease-out forwards; }
+#battle-hud .bh-banner.go::before, #battle-hud .bh-banner.go.show::before { animation: bh-band-go .9s ease-out forwards; }
+@keyframes bh-band { to { transform: scaleY(1); } }
+@keyframes bh-band-go { 0% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1.6); opacity: 0; } }
+#battle-hud .bh-banner-text {
+  position: relative; padding: 0 .12em;
+  font-weight: 900; font-style: italic; font-size: clamp(48px, 9vw, 108px); line-height: 1; letter-spacing: .06em; white-space: nowrap;
+}
+#battle-hud .bh-banner.ready .bh-banner-text {
+  color: #e9fdff; font-size: clamp(40px, 6.5vw, 76px); letter-spacing: .3em;
+  text-shadow: 0 0 18px rgba(94, 231, 255, .95), 0 0 42px rgba(94, 231, 255, .6), 0 4px 0 #04202c;
+  animation: bh-ready .6s cubic-bezier(.2,.9,.3,1) both;
+}
+@keyframes bh-ready { from { opacity: 0; transform: translateX(-30%); letter-spacing: .8em; } to { opacity: 1; transform: translateX(0); letter-spacing: .3em; } }
+#battle-hud .bh-banner.go .bh-banner-text {
+  font-size: clamp(64px, 12vw, 150px);
+  background: linear-gradient(180deg, #fffbe6 10%, #ffe066 50%, #ff9d1c 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 16px rgba(255, 200, 60, .9)) drop-shadow(0 5px 0 #4a2300);
+  animation: bh-go .9s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes bh-go { 0% { opacity: 0; transform: scale(2.6); } 25% { opacity: 1; transform: scale(1); } 70% { opacity: 1; transform: scale(1.06); } 100% { opacity: 0; transform: scale(1.35); } }
+#battle-hud .bh-banner.win .bh-banner-text {
+  background: linear-gradient(180deg, #fffdf0 0%, #ffe680 38%, #f5b524 62%, #b8680c 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 18px rgba(255, 196, 64, .85)) drop-shadow(0 0 46px rgba(255, 160, 40, .5)) drop-shadow(0 6px 0 #3d1d00);
+  animation: bh-win .8s cubic-bezier(.2,1.5,.4,1) both;
+}
+@keyframes bh-win { 0% { opacity: 0; transform: scale(3) rotate(-4deg); } 60% { opacity: 1; transform: scale(.94) rotate(0); } 100% { opacity: 1; transform: scale(1); } }
+#battle-hud .bh-banner.lose .bh-banner-text {
+  background: linear-gradient(180deg, #e9eef8 0%, #9aa6c4 50%, #5a3a58 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 14px rgba(255, 60, 90, .55)) drop-shadow(0 5px 0 #14050c);
+  animation: bh-lose 1s cubic-bezier(.3,1.2,.4,1) both;
+}
+@keyframes bh-lose { 0% { opacity: 0; transform: translateY(-70%); } 100% { opacity: 1; transform: translateY(0); } }
+#battle-hud .bh-banner.win::before { border-color: rgba(255, 210, 90, .65); }
+#battle-hud .bh-banner.lose::before { border-color: rgba(255, 90, 110, .45); }
+
+/* ---------------------------------------------------------------- result */
+#battle-hud .bh-result {
+  position: absolute; left: 50%; bottom: 11%; transform: translate(-50%, 10px);
+  display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0;
+  transition: opacity .6s .5s ease, transform .6s .5s ease;
+}
+#battle-hud .bh-result.show { opacity: 1; transform: translate(-50%, 0); }
+#battle-hud .bh-result-stats {
+  padding: 9px 20px; border-radius: 8px; background: rgba(3, 12, 24, .72);
+  border: 1px solid rgba(94, 231, 255, .28); box-shadow: 0 0 18px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+#battle-hud .bh-result-stats { display: flex; gap: 22px; font-size: 12px; font-weight: 600; letter-spacing: .22em; color: rgba(230, 251, 255, .85); white-space: nowrap; }
+#battle-hud .bh-result-stats b { display: block; font-size: 20px; font-weight: 900; font-style: italic; letter-spacing: .05em; color: #fff; text-shadow: 0 0 10px rgba(94, 231, 255, .7); }
+#battle-hud .bh-result-stats > div { text-align: center; }
+#battle-hud .bh-chain {
+  display: flex; align-items: center; gap: 7px; padding: 4px 11px 4px 7px; border-radius: 999px;
+  border: 1px solid rgba(232, 227, 213, .22); background: rgba(10, 12, 16, .45);
+  font-size: 9px; font-weight: 600; letter-spacing: .24em; color: rgba(232, 227, 213, .7);
+}
+#battle-hud .bh-chain img { width: 15px; height: 15px; display: block; opacity: .9; }
+
+/* ---------------------------------------------------------------- controls card */
+#battle-hud .bh-controls {
+  position: absolute; right: 18px; bottom: 18px; width: 214px; padding: 11px 14px 12px;
+  background: linear-gradient(160deg, rgba(8, 24, 42, .82), rgba(4, 12, 24, .78));
+  border: 1px solid rgba(94, 231, 255, .35); border-radius: 10px;
+  box-shadow: 0 0 22px rgba(94, 231, 255, .12), inset 0 0 0 1px rgba(255, 255, 255, .03);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+#battle-hud .bh-controls.hidden { opacity: 0; transform: translateY(10px); }
+#battle-hud .bh-controls-title {
+  font-size: 11px; font-weight: 800; letter-spacing: .32em; color: var(--cy); margin-bottom: 7px;
+  padding-bottom: 6px; border-bottom: 1px solid rgba(94, 231, 255, .2); text-shadow: 0 0 8px rgba(94, 231, 255, .6);
+}
+#battle-hud .bh-c-row { display: flex; align-items: center; gap: 4px; margin: 4px 0; }
+#battle-hud .bh-chip {
+  min-width: 22px; height: 20px; padding: 0 5px; display: inline-grid; place-items: center;
+  border: 1px solid rgba(94, 231, 255, .5); border-radius: 4px; background: rgba(94, 231, 255, .08);
+  font-size: 9px; font-weight: 800; letter-spacing: .04em; color: #e6fbff;
+  box-shadow: 0 2px 0 rgba(94, 231, 255, .25);
+}
+#battle-hud .bh-chip.wide { min-width: 52px; }
+#battle-hud .bh-c-row em {
+  margin-left: auto; font-style: normal; font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
+  font-size: 11.5px; color: rgba(230, 251, 255, .78);
+}
+
+/* ---------------------------------------------------------------- damage vignette */
+#battle-hud .bh-flash {
+  position: absolute; inset: 0; opacity: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(255, 30, 60, .55) 100%);
+}
+
+@media (max-width: 760px) {
+  #battle-hud .bh-robot { font-size: 11px; }
+  #battle-hud .bh-hpnum { font-size: 17px; }
+  #battle-hud .bh-bar { height: 15px; }
+  #battle-hud .bh-vs { width: 46px; }
+  #battle-hud .bh-vs span { font-size: 18px; }
+  #battle-hud .bh-controls { transform: scale(.8); transform-origin: 100% 100%; }
+  #battle-hud .bh-result-stats { gap: 12px; font-size: 10px; }
+}

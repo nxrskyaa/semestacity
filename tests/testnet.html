@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rialo Testnet sim + Gacha — test harness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@500;700;800&family=Orbitron:wght@600;800;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; min-height: 100%; background: radial-gradient(ellipse at 50% 0%, #1b2550, #070b1a 70%); color: #eef3ff; font-family: 'M PLUS Rounded 1c', sans-serif; }
+    main { max-width: 980px; margin: 0 auto; padding: 28px 18px; }
+    h1 { font-family: Orbitron, sans-serif; letter-spacing: .12em; color: #5ee7ff; font-size: 22px; margin: 0 0 4px; }
+    p.sub { color: #9fb0d6; margin: 0 0 18px; font-size: 13px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .bar button { padding: 9px 14px; border-radius: 9px; border: 1px solid rgba(120,200,255,.3); background: rgba(255,255,255,.06); color: #eef3ff; font: 700 13px 'M PLUS Rounded 1c', sans-serif; cursor: pointer; }
+    .bar button.primary { background: #5ee7ff; color: #04213a; border-color: #5ee7ff; }
+    .bar button:hover { filter: brightness(1.15); }
+    #state { font: 12px/1.6 ui-monospace, Consolas, monospace; background: rgba(0,0,0,.35); border: 1px solid rgba(120,200,255,.15); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 14px; }
+    #log { font: 12px/1.55 ui-monospace, Consolas, monospace; background: rgba(0,0,0,.45); border: 1px solid rgba(120,200,255,.15); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; max-height: 46vh; overflow: auto; }
+    #log .ok { color: #7ef0c0; } #log .bad { color: #ff8a8a; } #log .info { color: #9fb0d6; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>RIALO TESTNET · SIMULATED</h1>
+    <p class="sub">Harness for src/systems/chain.js, src/systems/gacha.js, src/ui/playground.js, src/ui/gacha.js. Fake save in localStorage <code>semesta-testnet-harness</code>. No network calls.</p>
+    <div class="bar">
+      <button class="primary" id="b-pg">Open Playground</button>
+      <button class="primary" id="b-gacha">Open Gacha</button>
+      <button id="b-lang">Lang: EN</button>
+      <button id="b-ff">Fast-forward faucet cooldown</button>
+      <button id="b-reward">Quest reward +2</button>
+      <button id="b-rich">Set balance 50</button>
+      <button id="b-broke">Set balance 0</button>
+      <button id="b-reset">Reset save</button>
+      <button id="b-sim">Simulate 1000 rolls</button>
+      <button id="b-tests">Run self-tests</button>
+    </div>
+    <div id="state"></div>
+    <div id="log"></div>
+  </main>
+  <script type="module" src="./testnet-test.js"></script>
+</body>
+</html>

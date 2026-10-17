@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Holo Battle — test harness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b1226; overflow: hidden; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    #overlay {
+      position: fixed; inset: 0; display: grid; place-items: center; z-index: 100;
+      font-family: 'Orbitron', sans-serif; color: #e6fbff; background: rgba(4, 10, 24, .55); cursor: pointer;
+    }
+    #overlay .box { text-align: center; padding: 26px 34px; border: 1px solid rgba(94,231,255,.45); border-radius: 12px; background: rgba(6,16,32,.85); box-shadow: 0 0 30px rgba(94,231,255,.2); }
+    #overlay h1 { margin: 0 0 8px; font-size: 22px; letter-spacing: .3em; color: #5ee7ff; }
+    #overlay p { margin: 6px 0; font-size: 12px; letter-spacing: .15em; opacity: .85; }
+    #overlay.hidden { display: none; }
+    #dbg { position: fixed; left: 10px; bottom: 10px; z-index: 101; font: 11px monospace; color: #8fb; opacity: .7; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div id="overlay"><div class="box"><h1>HOLO BATTLE</h1><p id="ov-msg">CLICK TO START</p><p style="opacity:.55">ESC releases the mouse</p></div></div>
+  <div id="dbg"></div>
+  <script type="module" src="./battle-test.js"></script>
+</body>
+</html>

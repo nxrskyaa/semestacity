@@ -1,0 +1,21 @@
+# dependencies / build output
+node_modules/
+dist/
+
+# local-only working files (dev screenshots, source art, renders, dev logs)
+.shots/
+art/
+notes/
+tools/blender/renders/
+
+# deploy / secrets
+.vercel/
+.env*
+
+# python
+__pycache__/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
