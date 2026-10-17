@@ -1020,6 +1020,7 @@ if (import.meta.env.DEV) {
   window.__step = (n = 1, dt = 1 / 60) => { for (let i = 0; i < n; i++) frame(dt); };
   window.__battle = () => beginBattle();
   import('./characters/anims.js').then((m) => { window.__PAT = m.PAT; window.__FEED = m.FEED; });
+  import('./characters/avatar.js').then((m) => { window.__UMB = m.UMB; });
   // render frames and upload the canvas to .shots/<name>.png (see vite.config.js)
   window.__shot = async (name = 'shot', n = 2) => {
     window.__step(n);

@@ -17,7 +17,10 @@ const sideArm = (s, { x = 0, twistIn = 0, out = 0, fx = 0, fy = 0, fz = 0, hx = 
 
 export const EMOTES = { wave: 2.0, nod: 1.1, think: 2.8, cheer: 1.7, pat: 3.4, feed: 2.8, play: 2.8 };
 // crouch-down emotes used with Spider the cat (player kneels, reaches toward the ground in front)
-const CROUCH = { pat: 1, feed: 1, play: 0.3 };
+const CROUCH = { pat: 1, feed: 1, play: 0 };
+// how far the head tips down while crouched: the chibi head is huge, so a big tilt hides the face and
+// the whole pose reads as bowing to the floor
+const HEAD_TILT = { pat: 0.3, feed: 0.12 };
 /** 'play': the yarn ball leaves the throwing hand at this emote time (main.js flies it to Spider) */
 export const TOSS_AT = 0.5;
 /** pat pose knobs: a real squat (hips drop, back stays fairly upright) instead of folding at the waist */
@@ -26,7 +29,7 @@ export const TOSS_AT = 0.5;
 export const PAT = { drop: 0.55, lean: 0.18, hipLean: 0.05, x0: -1.12, xs: -0.3, out: 0.22, fx0: -0.22, fxs: 0, hx0: 0.45, hxs: -0.35, rate: 1.6 };
 export const PAT_HAND = { x: -0.11, z: 0.33 };   // player-local contact point (for emoteSide -1 = right hand)
 /** feed: both hands hold the bowl at the chest (elbows bent), then lower it to the floor */
-export const FEED = { x0: -0.95, x1: -0.9, fx0: -1.1, fx1: -0.1, out: -0.02, lean: 0.5 };   // hands reach ~0.19 m off the floor, 0.2 m ahead
+export const FEED = { x0: -0.95, x1: -0.9, fx0: -1.1, fx1: -0.1, out: -0.02, lean: 0.2 };   // back stays upright; the bowl is let go ~0.25 m up and settles
 
 const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _v = new THREE.Vector3();
 
@@ -208,7 +211,7 @@ export class Animator {
     if (em === 'think') { headRz += ew * 0.16; headRx += ew * -0.1; headRy += ew * 0.12 * this.emoteSide; }
     if (em === 'cheer') headRx += ew * -0.15;
     if (em === 'wave') headRz += ew * 0.1 * -this.emoteSide;
-    if (crouch) { headRx += crouch * 0.42; nrx += crouch * 0.15; headRz += crouch * 0.08 * Math.sin(et * 1.6); }
+    if (crouch) { headRx += crouch * (HEAD_TILT[em] ?? 0.3); nrx += crouch * 0.06; headRz += crouch * 0.08 * Math.sin(et * 1.6); }
     headRx += air * 0.06 * vyN;
     R.neck.rotation.set(nrx, nry, nrz);
     R.head.rotation.set(headRx, headRy, headRz);

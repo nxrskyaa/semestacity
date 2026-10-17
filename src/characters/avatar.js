@@ -10,6 +10,10 @@ import { buildHeadwear, isHood } from './headwear.js';
 import { createAura } from './aura.js';
 import { charMat, prep, merge, hullGeo, outlineMat, ellipsoid, weld, OUTLINE_COLOR } from './geom.js';
 import { createUmbrella, createPhone, createBroom, createRag } from './props.js';
+
+/** umbrella placement for the chibi cast (the canopy must clear the big head + hair; see updateUmbrella) */
+// (searched in-engine: at 1.0 / no lift the canopy cut 2 cm into the hair; this clears it by ~22 cm)
+export const UMB = { side: 0.2, back: 0.05, up: 1.0, upright: 0.35, size: 1.15, lift: 0.2 };
 import { Animator } from './anims.js';
 import { toonMat } from '../gfx/toon.js';
 
@@ -390,7 +394,8 @@ export function createAvatar(appearance) {
     umbMount.visible = umbOpen > 0.02;
     if (!umbMount.visible) return;
     const k = umbOpen;
-    u.scale.set(0.15 + 0.85 * k, 0.6 + 0.4 * k, 0.15 + 0.85 * k);
+    const sz = UMB.size;
+    u.scale.set((0.15 + 0.85 * k) * sz, (0.6 + 0.4 * k) * sz * (1 + UMB.lift), (0.15 + 0.85 * k) * sz);
     u.userData.canopyMat.opacity = (u.userData.opaque ? 1 : 0.28) * Math.min(1, k * 1.5);
     if (u.userData.underMat) u.userData.underMat.opacity = Math.min(1, k * 1.5);
     // aim the shaft from the hand toward a point above the head, upright in world
@@ -399,9 +404,9 @@ export function createAvatar(appearance) {
     const hp = rig.headC.getWorldPosition(_v2);
     root.getWorldQuaternion(_q);
     // pass beside the (big) head on the right side, slightly behind it
-    const back = _back.set(-0.13 * rig.d.scale, 0, -0.05).applyQuaternion(_q);
-    const dir = hp.add(back).addScaledVector(UP, 1.0 * rig.d.scale).sub(gp).normalize();
-    dir.lerp(UP, 0.35).normalize();
+    const back = _back.set(-UMB.side * rig.d.scale, 0, -UMB.back).applyQuaternion(_q);
+    const dir = hp.add(back).addScaledVector(UP, UMB.up * rig.d.scale).sub(gp).normalize();
+    dir.lerp(UP, UMB.upright).normalize();
     _q2.setFromUnitVectors(UP, dir).multiply(_q);
     _q2.multiply(HOOK_YAW);
     rig.armR.grip.getWorldQuaternion(_q).invert();

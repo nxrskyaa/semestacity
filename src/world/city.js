@@ -65,7 +65,7 @@ export function buildCity(scene, { collision, renderer = null, quality = 'high' 
   buildProps(ctx);
 
   ctx.batch.flush(root);
-  ctx.glows.build(root);
+  ctx.glows.build(root, { roads: ROADS, pave: PAVE });
   root.updateMatrixWorld(true);
 
   const rain = createRain(scene, {

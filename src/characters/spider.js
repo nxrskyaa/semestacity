@@ -719,7 +719,7 @@ export function createSpider({ path = [], home = null, groundAt = null, collisio
         const k = st.t;
         if (st.d.from) {
           // set down from the player's hands: short glide onto the floor in front of the face
-          const g = sstep(0, 0.22, k);
+          const g = sstep(0, 0.4, k);
           bowl.position.lerpVectors(st.d.from, st.d.to, g);
           bowl.position.y = lerp(st.d.from.y, st.d.to.y, g);
         } else bowl.scale.setScalar(Math.min(1, k * 4));

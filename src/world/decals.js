@@ -15,7 +15,10 @@ export class Glows {
   /** reflection streak on the ground below a bright source (x,z), pointing toward the camera */
   streak(x, z, w, len, color = 0xffc98a, i = 1, y = 0.02) { this.streaks.push({ x, y, z, w, len, color: new THREE.Color(color), i }); return this; }
 
-  build(parent) {
+  /** roads: [{minX,minZ,maxX,maxZ}] at y=0, everything else at pave height: streaks are clipped to the ground
+   *  level they were placed on, so a reflection laid on a raised plaza never hovers over the lower road
+   *  (where it would be drawn across the feet and legs of anyone standing there) */
+  build(parent, { roads = [], pave = 0.15 } = {}) {
     if (this.pools.length) {
       const geo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
       const mat = new THREE.MeshBasicMaterial({
@@ -49,10 +52,14 @@ export class Glows {
       geo.setAttribute('aCol', new THREE.InstancedBufferAttribute(b, 4));
       geo.instanceCount = n;
       const mat = new THREE.ShaderMaterial({
-        uniforms: { uFog: { value: 0.022 }, uFogColor: { value: new THREE.Color(0x1d2a4f) }, uGain: { value: 1.5 } },
+        uniforms: {
+          uFog: { value: 0.022 }, uFogColor: { value: new THREE.Color(0x1d2a4f) }, uGain: { value: 1.5 },
+          uRoads: { value: [0, 1, 2, 3].map((i) => (roads[i] ? new THREE.Vector4(roads[i].minX, roads[i].minZ, roads[i].maxX, roads[i].maxZ) : new THREE.Vector4(1e6, 1e6, 1e6, 1e6))) },
+          uPave: { value: pave },
+        },
         vertexShader: /* glsl */`
           attribute vec4 aPos; attribute vec4 aCol;
-          varying vec2 vUv; varying vec3 vCol; varying float vFogDepth;
+          varying vec2 vUv; varying vec3 vCol; varying float vFogDepth; varying vec3 vW;
           void main(){
             vec2 to = cameraPosition.xz - aPos.xz;
             float d = length(to);
@@ -63,14 +70,18 @@ export class Glows {
             p.xz += side * position.x * aPos.w + dir * (position.y - 0.08) * len;
             vUv = position.xy + vec2(0.5, 0.0);
             vCol = aCol.rgb;
+            vW = p;
             vec4 mv = viewMatrix * vec4(p, 1.0);
             vFogDepth = -mv.z;
             gl_Position = projectionMatrix * mv;
           }`,
         fragmentShader: /* glsl */`
-          uniform float uFog; uniform vec3 uFogColor; uniform float uGain;
-          varying vec2 vUv; varying vec3 vCol; varying float vFogDepth;
+          uniform float uFog; uniform vec3 uFogColor; uniform float uGain; uniform vec4 uRoads[4]; uniform float uPave;
+          varying vec2 vUv; varying vec3 vCol; varying float vFogDepth; varying vec3 vW;
           void main(){
+            float ground = uPave;
+            for (int i = 0; i < 4; i++) { vec4 r = uRoads[i]; if (vW.x > r.x && vW.x < r.z && vW.z > r.y && vW.z < r.w) ground = 0.0; }
+            if (abs(vW.y - ground) > 0.06) discard;     // this part of the streak would float above (or sink below) the ground
             float x = abs(vUv.x - 0.5) * 2.0;
             float across = exp(-x * x * 4.0);
             float vy = clamp(vUv.y, 0.0, 1.0);
