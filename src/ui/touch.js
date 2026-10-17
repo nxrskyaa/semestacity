@@ -40,6 +40,8 @@ export function createTouchControls() {
   document.body.classList.add('touch');
   const root = document.createElement('div');
   root.id = 'touchui';
+  root.className = 'off';      // hidden until the game enters explore/battle (else its zones eat taps on the title/menus)
+  root.dataset.mode = 'off';
   root.innerHTML = `<div class="joyzone"><div class="joy"><div class="nub"></div></div></div>
     <div class="lookzone"></div><div class="btns"></div>`;
   document.body.appendChild(root);
